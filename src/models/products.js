@@ -1,21 +1,57 @@
-const db = require("../config/database")
+const sequelize = require("../config/database")
+const { DataTypes } = require("sequelize")
 
-async function insertProduct(product){
-    const { name, category, price } = product;
+const Products = sequelize.define('Products', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    price: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+    },
+    originalPrice: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true
+    },
+    category_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+            model: "Categories",
+            key: "id"
+        }
+    },
+    is_new: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
+    specifications: {
+        type: DataTypes.JSON,
+        allowNull: true
+    },
+    shipping: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    warranty: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }, 
+    return: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+})
 
-    await db.query(`
-        INSERT INTO products (name, category, price)
-        VALUES ($1, $2, $3)
-    `, [name, category, price])
-}
-
-async function getAllProducts(){
-    const products = await db.query("SELECT * FROM products")
-
-    return products.rows
-}
-
-module.exports = {
-    insertProduct,
-    getAllProducts
-}
+module.exports = Products;
