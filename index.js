@@ -1,4 +1,5 @@
 //import commonJs
+require("dotenv").config()
 const express = require("express");
 const app = express();
 const productsRoutes = require("./src/routes/products")

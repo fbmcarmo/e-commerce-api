@@ -1,31 +1,19 @@
-const { upload } = require("../config/aws-s3");
+const multer = require("multer");
 const { Categories } = require("../models");
 
-async function processImageUpload(req, res){
-    return new Promise((resolve, reject) => {
-        upload.single("image")(req, res, (err) => {
+const upload = multer({ storage: multer.memoryStorage() });
+
+async function validateInsertProduct(req, res, next){
+
+    await new Promise((resolve, reject) => {
+        upload.array("images")(req, res, (err) => {
             if(err){
-                reject(err);
+                reject(err)
             } else {
                 resolve();
             }
         })
     })
-}
-
-async function validateInsertProduct(req, res, next){
-
-    try {
-        await processImageUpload(req, res);
-
-        if(req.file && req.file.location){
-            req.body.image_url = req.file.location;
-        }
-    } catch (error) {
-        return res.status(400).send({
-            error: error.message || "Erro ao fazer upload da imagem"
-        })
-    }
 
     const { 
         name, 
