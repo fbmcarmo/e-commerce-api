@@ -4,7 +4,6 @@ const { Categories } = require("../models");
 const upload = multer({ storage: multer.memoryStorage() });
 
 async function validateInsertProduct(req, res, next){
-
     await new Promise((resolve, reject) => {
         upload.array("images")(req, res, (err) => {
             if(err){
@@ -14,17 +13,17 @@ async function validateInsertProduct(req, res, next){
             }
         })
     })
-
-    const { 
-        name, 
-        price, 
-        category_id, 
+    
+    const {
+        name,
+        price,
+        category_id,
         shipping,
         warranty,
-        return_policy 
+        return_policy
     } = req.body;
 
-    if(!name || !price || !category_id || !shipping || !warranty || !return_policy){
+    if(!name || !price || !category_id | !shipping || !warranty || !return_policy){
         return res.status(400).send({
             error: "Todos os campos são obrigatórios"
         })

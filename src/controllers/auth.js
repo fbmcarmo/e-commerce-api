@@ -10,7 +10,14 @@ async function login(req, res){
             {expiresIn: "30d"}
         )
 
-        return res.send({token})
+        return res.send({
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                name: user.name
+            }
+        })
     } catch (error) {
         return res.status(500).send({
             error: error.message
