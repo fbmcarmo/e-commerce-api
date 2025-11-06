@@ -11,4 +11,9 @@ router.post(
     productsController.insertProduct
 )
 
+router.get(
+    "/products",
+    productsController.getAllProducts
+)
+
 module.exports = router

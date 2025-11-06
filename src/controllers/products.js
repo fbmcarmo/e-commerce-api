@@ -31,6 +31,19 @@ async function insertProduct(req, res){
     }
 }
 
+async function getAllProducts(req, res){
+    try {
+        const products = await Products.findAll()
+
+        return res.send(products)
+    } catch (error) {
+        return res.status(500).send({
+            error: error.message
+        })
+    }
+}
+
 module.exports = {
-    insertProduct
+    insertProduct,
+    getAllProducts
 }
