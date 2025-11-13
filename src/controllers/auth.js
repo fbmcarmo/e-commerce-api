@@ -15,7 +15,8 @@ async function login(req, res){
             user: {
                 id: user.id,
                 email: user.email,
-                name: user.name
+                name: user.name,
+                image: user.image_url
             }
         })
     } catch (error) {
