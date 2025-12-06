@@ -23,6 +23,12 @@ async function validateLogin(req, res, next){
             })
         }
 
+        if(!user.active){
+            return res.status(400).send({
+                error: "Usuário não ativo"
+            })
+        }
+
         const matchPassword = await bcrypt.compare(password, user.password)
 
         if(!matchPassword){

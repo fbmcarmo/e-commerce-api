@@ -34,6 +34,11 @@ const Users = sequelize.define("Users", {
         validate: {
             isUrl: true
         }
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
 })
 
