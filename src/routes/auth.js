@@ -9,4 +9,9 @@ router.post(
     authController.login
 )
 
+router.post(
+    "/active-user",
+    authController.activeUser
+)
+
 module.exports = router;
