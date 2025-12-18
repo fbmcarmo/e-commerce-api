@@ -23,18 +23,19 @@ async function validateLogin(req, res, next){
             })
         }
 
-        if(!user.active){
-            return res.status(400).send({
-                error: "Usuário não ativo",
-                code: 4002
-            })
-        }
-
         const matchPassword = await bcrypt.compare(password, user.password)
 
         if(!matchPassword){
             return res.status(400).send({
                 error: "Senha incorreta"
+            })
+        }
+
+         if(!user.active){
+            return res.status(400).send({
+                error: "Usuário não ativo",
+                code: 4002,
+                id: user.id
             })
         }
 

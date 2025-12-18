@@ -14,4 +14,9 @@ router.post(
     authController.activeUser
 )
 
+router.post(
+    "/resend-active-email",
+    authController.getActiveTokenData
+)
+
 module.exports = router;
