@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: e-commerce-api
+    ports:
+      - "4467:4467"
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-ecommerce}
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASSWORD=${DB_PASSWORD:-postgres}
+      - DATABASE_URI=postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-ecommerce}
+      #CONFIG REDIS
+      - REDIS_URL=redis://redis:6379
+      #AWS
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_S3_BUCKET=${AWS_S3_BUCKET}
+      #JWT
+      - JWT_SECRET=${JWT_SECRET}
+      - ENCRYPT_SECRET=${ENCRYPT_SECRET}
+      #EMAIL FRONTEND
+      - FRONTEND_URL=${FRONTEND_URL}
+      - EMAIL_API_URL=${EMAIL_API_URL}
+      - SECRET_KEY_EMAIL_API=${SECRET_KEY_EMAIL_API}
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - ecommerce-network
+
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: e-commerce-postgres
+    environment:
+      - POSTGRES_DB=${DB_NAME:-ecommerce}
+      - POSTGRES_USER=${DB_USER:-postgres}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecommerce-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: e-commerce-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ecommerce-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  ecommerce-network:
+    driver: bridge
+      
